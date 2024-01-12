@@ -37,6 +37,22 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Seeding Database
+
+```bash
+# create database
+$ npm run db:create
+
+# drop database
+$ npm run db:drop
+
+# run seeder to populate DB with data
+$ npm run seed:run
+
+# create seeder
+$ npm run seed:create
+```
+
 ## Testing
 
 ```bash
@@ -49,6 +65,7 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
 ## Make Commands
 
 ```bash

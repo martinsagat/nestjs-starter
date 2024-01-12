@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin.dto';
-import { Roles } from './../decorators/roles.decorator';
-import { Role } from 'src/enums/role.enum';
+import { Roles } from './../shared/decorators/roles.decorator';
+import { Role } from './../shared/enums/role.enum';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 

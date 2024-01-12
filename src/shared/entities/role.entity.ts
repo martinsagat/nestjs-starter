@@ -7,7 +7,7 @@ export class Role {
   id: string;
 
   @Column()
-  roleName: string;
+  name: string;
 
   @ManyToMany((type) => User, (user) => user.roles)
   users: User[];

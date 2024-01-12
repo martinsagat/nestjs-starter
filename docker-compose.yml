@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: docker/MySQL/Dockerfile
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: on-failure

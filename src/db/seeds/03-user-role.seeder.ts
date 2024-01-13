@@ -11,7 +11,6 @@ export default class UserRoleSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const roleRepository = dataSource.getRepository(Role);
 
-    // Randomly assign roles to users
     const users = await userRepository.find();
     const roles = await roleRepository.find();
 

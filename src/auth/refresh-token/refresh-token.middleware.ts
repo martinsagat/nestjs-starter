@@ -21,7 +21,7 @@ export class RefreshTokenMiddleware implements NestMiddleware {
     const refreshToken = req.cookies['refreshToken'] || null;
     if (!refreshToken) throw new UnauthorizedException('Invalid refresh token');
 
-    const payload = this.jwtService.verify(refreshToken, {
+    const payload = this.jwtService.verify(refreshToken.token, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
     });
 
@@ -36,7 +36,7 @@ export class RefreshTokenMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Invalid refresh token');
 
     const isRefreshTokenValid = await bcrypt.compare(
-      refreshToken,
+      refreshToken.token,
       user.refreshToken,
     );
     if (!isRefreshTokenValid)

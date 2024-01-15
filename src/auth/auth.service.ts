@@ -11,6 +11,12 @@ export enum TokenType {
   ACCESS = 'access',
   REFRESH = 'refresh',
 }
+
+export type Token = {
+  token: string;
+  type: TokenType;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -19,7 +25,10 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async signIn(signInDto: SignInDto, @Response() res: EResponse) {
+  async signIn(
+    signInDto: SignInDto,
+    @Response() res: EResponse,
+  ): Promise<Token> {
     const { email, password } = signInDto;
     const user = await this.usersService.findByEmail(email);
 
@@ -30,9 +39,15 @@ export class AuthService {
     if (!passwordIsValid)
       throw new UnauthorizedException('Invalid username or password');
 
-    const accessToken = await this.generateToken(user, TokenType.ACCESS);
-    const refreshToken = await this.generateToken(user, TokenType.REFRESH);
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const accessToken: Token = await this.generateToken(user, TokenType.ACCESS);
+    const refreshToken: Token = await this.generateToken(
+      user,
+      TokenType.REFRESH,
+    );
+    const hashedRefreshToken: string = await bcrypt.hash(
+      refreshToken.token,
+      10,
+    );
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -43,7 +58,10 @@ export class AuthService {
     });
 
     await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
-    return res.status(200).send({ access_token: accessToken });
+
+    res.status(200).send(accessToken);
+
+    return accessToken;
   }
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -60,14 +78,14 @@ export class AuthService {
     return null;
   }
 
-  async refreshAccessToken(user: User): Promise<string> {
+  async refreshAccessToken(user: User): Promise<Token> {
     return await this.generateToken(user, TokenType.ACCESS);
   }
 
   private async generateToken(
     user: User,
     tokenType: TokenType,
-  ): Promise<string> {
+  ): Promise<Token> {
     const payload = {
       sub: user.id,
       email: user.email,
@@ -77,19 +95,25 @@ export class AuthService {
 
     switch (tokenType) {
       case TokenType.ACCESS:
-        return await this.jwtService.signAsync(payload, {
-          expiresIn: this.configService.get<string>(
-            'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-          ),
-          secret: this.configService.get<string>('JWT_ACCESS_SECRET_KEY'),
-        });
+        return {
+          token: await this.jwtService.signAsync(payload, {
+            expiresIn: this.configService.get<string>(
+              'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+            ),
+            secret: this.configService.get<string>('JWT_ACCESS_SECRET_KEY'),
+          }),
+          type: tokenType,
+        };
       case TokenType.REFRESH:
-        return await this.jwtService.signAsync(payload, {
-          expiresIn: this.configService.get<string>(
-            'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-          ),
-          secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
-        });
+        return {
+          token: await this.jwtService.signAsync(payload, {
+            expiresIn: this.configService.get<string>(
+              'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+            ),
+            secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
+          }),
+          type: tokenType,
+        };
       default:
         throw new Error('Invalid token type');
     }

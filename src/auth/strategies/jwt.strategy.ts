@@ -5,6 +5,7 @@ import { UsersService } from '../../users/users.service';
 
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/shared/entities/user.entity';
+import { TokenType } from '../auth.service';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -23,7 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (!user) throw new UnauthorizedException();
     if (!user.refreshToken) throw new UnauthorizedException();
-    if (payload.tokenType !== 'access') throw new UnauthorizedException();
+    if (payload.tokenType !== TokenType.ACCESS)
+      throw new UnauthorizedException();
 
     return user;
   }

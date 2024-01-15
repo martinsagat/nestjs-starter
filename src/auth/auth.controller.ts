@@ -9,9 +9,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from './../users/users.service';
-// import { Roles } from './../shared/decorators/roles.decorator';
-// import { Role } from './../shared/enums/role.enum';
-// import { RolesGuard } from './guards/roles.guard';
 import { SignupDto } from './dto/signup.dto';
 import { Response as EResponse } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -37,7 +34,8 @@ export class AuthController {
   @Post('register')
   async signUp(@Body() signUpData: SignupDto) {
     const role = await this.roleService.findByName(Role.User);
-    return this.usersService.create(signUpData, [role]);
+    await this.usersService.create(signUpData, [role]);
+    return { message: 'User created successfully' };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -57,11 +55,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(
-    @Request() req: Record<string, any>,
-    @Response() res: EResponse,
-  ) {
-    const accessToken = await this.authService.refreshAccessToken(req.user);
-    return res.status(200).send({ access_token: accessToken });
+  async refresh(@Request() req: Record<string, any>) {
+    return await this.authService.refreshAccessToken(req.user);
   }
 }

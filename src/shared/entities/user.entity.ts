@@ -5,6 +5,10 @@ import {
   ManyToMany,
   JoinTable,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  BeforeUpdate,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from './role.entity';
@@ -15,17 +19,45 @@ export class User {
   id: string;
 
   @Column({ nullable: false, unique: true })
-  username: string;
+  email: string;
 
   @Column({ nullable: false })
   password: string;
 
-  @ManyToMany((type) => Role, (role) => role.users)
+  @Column({ default: null })
+  refreshToken: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  @ManyToMany(() => Role, (role) => role.users)
   @JoinTable()
   roles: Role[];
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  @BeforeInsert()
+  async setTimestamps() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  async updateTimestamps() {
+    this.updatedAt = new Date();
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 }

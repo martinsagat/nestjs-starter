@@ -1,30 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { Role } from './../shared/enums/role.enum';
-
-export type User = {
-  id: string;
-  username: string;
-  password: string;
-};
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SignupDto } from 'src/auth/dto/signup.dto';
+import { User } from 'src/shared/entities/user.entity';
+import { Role } from 'src/shared/entities/role.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      id: '1',
-      username: 'john',
-      password: 'changeme',
-      roles: [Role.User, Role.Admin],
-    },
-    {
-      id: '2',
-      username: 'maria',
-      password: 'guess',
-      roles: [Role.Admin, Role.User],
-    },
-  ];
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  async all(): Promise<User[]> {
+    return await this.userRepository.find({ relations: ['roles'] });
+  }
+
+  async findOne(id: string): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: ['roles'],
+    });
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email },
+      relations: ['roles'],
+    });
+  }
+
+  async findByRefreshToken(refreshToken: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { refreshToken },
+      relations: ['roles'],
+    });
+  }
+
+  async create(signUpData: SignupDto, roles: Role[]) {
+    const existingUser = await this.userRepository.findOne({
+      where: { email: signUpData.email },
+      withDeleted: true,
+    });
+
+    if (existingUser)
+      throw new ConflictException('User with the same email already exists');
+
+    const user = new User();
+    user.email = signUpData.email;
+    user.password = signUpData.password;
+    user.roles = roles;
+    return this.userRepository.save(user);
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string) {
+    const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not found');
+    user.refreshToken = refreshToken;
+    return this.userRepository.save(user);
   }
 }

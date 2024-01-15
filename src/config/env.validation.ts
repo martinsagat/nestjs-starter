@@ -31,10 +31,16 @@ class EnvironmentalVariables {
   DB_LOGGING: boolean;
 
   @IsNotEmpty()
-  JWT_SECRET_KEY: string;
+  JWT_ACCESS_SECRET_KEY: string;
 
   @IsNotEmpty()
-  JWT_EXPIRATION_TIME: string;
+  JWT_ACCESS_TOKEN_EXPIRATION_TIME: string;
+
+  @IsNotEmpty()
+  JWT_REFRESH_SECRET_KEY: string;
+
+  @IsNotEmpty()
+  JWT_REFRESH_TOKEN_EXPIRATION_TIME: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -2,33 +2,66 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Request,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SigninDto } from './dto/signin.dto';
-import { Roles } from './../shared/decorators/roles.decorator';
-import { Role } from './../shared/enums/role.enum';
-import { AuthGuard } from './guards/auth.guard';
-import { RolesGuard } from './guards/roles.guard';
+import { UsersService } from './../users/users.service';
+// import { Roles } from './../shared/decorators/roles.decorator';
+// import { Role } from './../shared/enums/role.enum';
+// import { RolesGuard } from './guards/roles.guard';
+import { SignupDto } from './dto/signup.dto';
+import { Response as EResponse } from 'express';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { SignInDto } from './dto/signin.dto';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { Role } from 'src/shared/enums/role.enum';
+import { RoleService } from 'src/role/role.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+    private roleService: RoleService,
+  ) {}
 
-  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Body() signInDto: SigninDto) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  signIn(@Body() signInDto: SignInDto, @Response() res: EResponse) {
+    return this.authService.signIn(signInDto, res);
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Post('register')
+  async signUp(@Body() signUpData: SignupDto) {
+    const role = await this.roleService.findByName(Role.User);
+    return this.usersService.create(signUpData, [role]);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req: Record<string, any>): any {
+  async getProfile(@Request() req: Record<string, any>) {
     return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async signOut(
+    @Request() req: Record<string, any>,
+    @Response() res: EResponse,
+  ) {
+    this.usersService.updateRefreshToken(req.user.id, null);
+    return res.status(200).send('Logged out successfully');
+  }
+
+  @Post('refresh')
+  async refresh(
+    @Request() req: Record<string, any>,
+    @Response() res: EResponse,
+  ) {
+    const accessToken = await this.authService.refreshAccessToken(req.user);
+    return res.status(200).send({ access_token: accessToken });
   }
 }

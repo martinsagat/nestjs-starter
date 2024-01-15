@@ -12,9 +12,9 @@ export default class UserSeeder implements Seeder {
     await dataSource.query('ALTER TABLE `user` AUTO_INCREMENT = 1;');
 
     const repository = dataSource.getRepository(User);
-    const password = await bcrypt.hash('changeme', 10);
+    const password = await bcrypt.hash('secret', 10);
     await repository.insert({
-      username: 'john',
+      email: 'test@test.com',
       password: password,
     });
 

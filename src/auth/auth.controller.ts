@@ -14,8 +14,8 @@ import { Response as EResponse } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignInDto } from './dto/signin.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
-import { Role } from 'src/shared/enums/role.enum';
-import { RoleService } from 'src/role/role.service';
+import { Role } from './../shared/enums/role.enum';
+import { RoleService } from './../role/role.service';
 
 @Controller('auth')
 export class AuthController {

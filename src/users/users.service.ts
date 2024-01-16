@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SignupDto } from 'src/auth/dto/signup.dto';
-import { User } from 'src/shared/entities/user.entity';
-import { Role } from 'src/shared/entities/role.entity';
+import { SignupDto } from './../auth/dto/signup.dto';
+import { User } from './../shared/entities/user.entity';
+import { Role } from './../shared/entities/role.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

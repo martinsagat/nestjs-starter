@@ -1,6 +1,6 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { User } from '../../shared/entities/user.entity';
+import { User } from './../../shared/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 export default class UserSeeder implements Seeder {

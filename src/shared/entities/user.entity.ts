@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from './role.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -21,18 +22,23 @@ export class User {
   @Column({ nullable: false, unique: true })
   email: string;
 
+  @Exclude()
   @Column({ nullable: false })
   password: string;
 
+  @Exclude()
   @Column({ default: null })
   refreshToken: string;
 
+  @Exclude()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Exclude()
   @DeleteDateColumn()
   deletedAt: Date;
 

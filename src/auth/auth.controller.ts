@@ -1,11 +1,13 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
   Request,
   Response,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from './../users/users.service';
@@ -39,6 +41,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('profile')
   async getProfile(@Request() req: Record<string, any>) {
     return req.user;

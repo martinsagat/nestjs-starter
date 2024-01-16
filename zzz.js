@@ -1,9 +1,9 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../app');
+const server = require('./../app');
 const should = chai.should();
 const BlueBird = require('bluebird');
-const Reminders = require('../models/reminders');
+const Reminders = require('./../models/reminders');
 
 chai.use(chaiHttp);
 

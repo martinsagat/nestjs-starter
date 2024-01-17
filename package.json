@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
     "db:create": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:create -d .src/db/data-source.ts",
     "db:drop": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs db:drop -d .src/db/data-source.ts",
     "seed:run": "ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d .src/db/data-source.ts",
@@ -40,6 +40,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.19",
     "typeorm-extension": "^3.3.0"
   },

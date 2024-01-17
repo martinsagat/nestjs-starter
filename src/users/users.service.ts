@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SignupDto } from './../auth/dto/signup.dto';
+import { SignUpDto } from './../auth/dto/signup.dto';
 import { User } from './../shared/entities/user.entity';
 import { Role } from './../shared/entities/role.entity';
 import { Repository } from 'typeorm';
@@ -40,7 +40,7 @@ export class UsersService {
     });
   }
 
-  async create(signUpData: SignupDto, roles: Role[]) {
+  async create(signUpData: SignUpDto, roles: Role[]) {
     const existingUser = await this.userRepository.findOne({
       where: { email: signUpData.email },
       withDeleted: true,

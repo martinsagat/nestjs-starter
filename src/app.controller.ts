@@ -11,8 +11,14 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get()
+  @Get('health')
   health(@Res() res: Response): Record<string, any> {
-    return res.status(200).send('OK');
+    return res.status(200).send(
+      {
+        status: 'ok',
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+      },
+    );
   }
 }

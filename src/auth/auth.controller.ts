@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from './../users/users.service';
-import { SignupDto } from './dto/signup.dto';
+import { SignUpDto } from './dto/signup.dto';
 import { Response as EResponse } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignInDto } from './dto/signin.dto';
@@ -34,7 +34,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async signUp(@Body() signUpData: SignupDto) {
+  async signUp(@Body() signUpData: SignUpDto) {
     const role = await this.roleService.findByName(Role.User);
     await this.usersService.create(signUpData, [role]);
     return { message: 'User created successfully' };

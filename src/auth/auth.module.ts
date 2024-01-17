@@ -12,6 +12,7 @@ import { RoleModule } from './../role/role.module';
 
 @Module({
   imports: [
+    ConfigModule,
     UsersModule,
     RoleModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),

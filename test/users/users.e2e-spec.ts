@@ -4,14 +4,21 @@ import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './../../src/shared/entities/user.entity';
 import { UsersService } from '../../src/users/users.service';
-import { AppModule } from '../../src/app.module';
-import { Role } from '../../src/shared/entities/role.entity';
-import { Repository } from 'typeorm';
-import { loginTestUser, registerTestUser, userCredentials } from './../utils/auth.utils';
+import { Role } from './../../src/shared/entities/role.entity';
+import {
+  loginTestUser,
+  registerTestUser,
+  userCredentials,
+} from './../utils/auth.utils';
 import { JwtService } from '@nestjs/jwt';
 import { UsersModule } from '../../src/users/users.module';
 import { AuthModule } from '../../src/auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '../../src/config/config.module';
+import { createDatabaseConfig } from '../../src/config/database.config';
+import { RoleModule } from '../../src/role/role.module';
+
+import { SeederFactoryManager } from 'typeorm-extension';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -19,23 +26,24 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          dropSchema: true,
-          entities: [User, Role],
-          logging: false,
-          synchronize: true,
+        UsersModule,
+        RoleModule,
+        AuthModule,
+        TypeOrmModule.forRootAsync({
+          imports: [ConfigModule],
+          useFactory: (configService: ConfigService) => ({
+            ...createDatabaseConfig(configService),
+            entities: [User, Role],
+          }),
+          inject: [ConfigService],
         }),
         TypeOrmModule.forFeature([User, Role]),
-        AuthModule,
-        UsersModule,
-        ConfigModule.forRoot({})
       ],
       providers: [
         UsersService,
         JwtService,
-        ConfigService
+        ConfigService,
+        SeederFactoryManager,
       ],
     }).compile();
 
@@ -44,7 +52,6 @@ describe('AppController (e2e)', () => {
   });
 
   it('/users (GET)', async () => {
-
     await registerTestUser(app, userCredentials);
     const jwtToken = await loginTestUser(app, userCredentials);
 

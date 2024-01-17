@@ -13,12 +13,10 @@ export class AppController {
 
   @Get('health')
   health(@Res() res: Response): Record<string, any> {
-    return res.status(200).send(
-      {
-        status: 'ok',
-        uptime: process.uptime(),
-        timestamp: Date.now(),
-      },
-    );
+    return res.status(200).send({
+      status: 'ok',
+      uptime: process.uptime(),
+      timestamp: Date.now(),
+    });
   }
 }

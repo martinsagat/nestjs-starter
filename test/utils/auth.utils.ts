@@ -5,12 +5,15 @@ import { INestApplication } from '@nestjs/common';
 import { SignInDto } from '../../src/auth/dto/signin.dto';
 import { SignUpDto } from '../../src/auth/dto/signup.dto';
 
-export const userCredentials: { email: string, password: string } = {
-    email: "test@test.com",
-    password: "secret"
-}
+export const userCredentials: { email: string; password: string } = {
+  email: 'test@test.com',
+  password: 'secret',
+};
 
-export async function registerTestUser(app: INestApplication, userData: SignUpDto): Promise<string> {
+export async function registerTestUser(
+  app: INestApplication,
+  userData: SignUpDto,
+): Promise<string> {
   const response = await request(app.getHttpServer())
     .post('/auth/register')
     .send(userData);
@@ -20,7 +23,10 @@ export async function registerTestUser(app: INestApplication, userData: SignUpDt
   return response.body.message;
 }
 
-export async function loginTestUser(app: INestApplication, userData: SignInDto): Promise<string> {
+export async function loginTestUser(
+  app: INestApplication,
+  userData: SignInDto,
+): Promise<string> {
   const response = await request(app.getHttpServer())
     .post('/auth/login')
     .send(userData);

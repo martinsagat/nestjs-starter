@@ -1,7 +1,7 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Role } from './../../shared/entities/role.entity';
-import { User } from './../../../src/shared/entities/user.entity';
+import { User } from './../../shared/entities/user.entity';
 
 export default class UserRoleSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<void> {

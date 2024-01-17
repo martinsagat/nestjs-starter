@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, validateSync } from 'class-validator';
+import { IsNotEmpty, IsNumber, validateSync } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 
 class EnvironmentalVariables {
@@ -23,11 +23,9 @@ class EnvironmentalVariables {
   DB_PASSWORD: string;
 
   @IsNotEmpty()
-  @IsBoolean()
   DB_SYNC: boolean;
 
   @IsNotEmpty()
-  @IsBoolean()
   DB_LOGGING: boolean;
 
   @IsNotEmpty()

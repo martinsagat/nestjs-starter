@@ -1,6 +1,6 @@
 # NestJS + MySQL Starter
-![Unit Test Workflow](https://github.com/martinsagat/nest-app/actions/workflows/unit_test.yml/badge.svg)
-![E2E Workflow](https://github.com/martinsagat/nest-app/actions/workflows/e2e_test.yml/badge.svg)
+![Unit Test Workflow](https://github.com/martinsagat/nestjs-starter/actions/workflows/unit_test.yml/badge.svg)
+![E2E Workflow](https://github.com/martinsagat/nestjs-starter/actions/workflows/e2e_test.yml/badge.svg)
 
 ## Used Technologies
 - [NestJS](https://nestjs.com)

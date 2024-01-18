@@ -9,19 +9,20 @@ on:
   workflow_dispatch:
 
 jobs: 
-  build:
-    runs-on: ubuntu-18.04
+  run-jest-tests:
+    name: Jest - E2E Tests
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout under $GITHUB_WORKSPACE
-      uses: actions/checkout@main
+      - name: Checkout under $GITHUB_WORKSPACE
+        uses: actions/checkout@main
 
-    - name: Set up NodeJS
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14
+      - name: Set up NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run Jest - E2E tests
-      run: npm run test:e2e
+      - name: Run Jest - E2E tests
+        run: npm run test:e2e

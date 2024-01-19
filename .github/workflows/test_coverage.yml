@@ -35,7 +35,7 @@ jobs:
           # Set branch name
           REF=${{ github.ref }}
           IFS='/' read -ra PATHS <<< "$REF"
-          BRANCH_NAME="${PATHS[1]}_${PATHS[2]}"
+          BRANCH_NAME="${PATHS[2]}_${PATHS[3]}"
           echo "BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create the Badge

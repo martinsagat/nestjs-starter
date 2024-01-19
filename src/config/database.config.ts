@@ -6,6 +6,7 @@ import RoleSeeder from './../db/seeds/02-role.seeder';
 import UserRoleSeeder from './../db/seeds/03-user-role.seeder';
 import { Role } from './../shared/entities/role.entity';
 import { User } from './../shared/entities/user.entity';
+import { UsersFactory } from './../db/factories/user.factory';
 
 export const createDatabaseConfig = (
   configService: ConfigService,
@@ -20,7 +21,7 @@ export const createDatabaseConfig = (
     synchronize: configService.get<boolean>('DB_SYNC'),
     logging: configService.get<boolean>('DB_LOGGING'),
     seeds: [UserSeeder, RoleSeeder, UserRoleSeeder],
-    factories: ['src/db/factories/**/*{.ts,.js}'],
+    factories: [UsersFactory],
     entities: [User, Role],
   };
 };

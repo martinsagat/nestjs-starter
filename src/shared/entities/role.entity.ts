@@ -10,5 +10,5 @@ export class Role {
   name: string;
 
   @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
+  users?: User[];
 }

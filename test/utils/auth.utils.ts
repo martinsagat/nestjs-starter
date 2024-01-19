@@ -36,3 +36,11 @@ export async function loginTestUser(
   expect(response.body).toHaveProperty('type');
   return response.body.token;
 }
+
+export async function registerAndLoginTestUser(
+  app: INestApplication,
+  userCredentials: { email: string; password: string },
+): Promise<any> {
+  await registerTestUser(app, userCredentials);
+  return await loginTestUser(app, userCredentials);
+}

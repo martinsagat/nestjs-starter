@@ -1,67 +1,41 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './../../src/shared/entities/user.entity';
-import { UsersService } from '../../src/users/users.service';
-import { Role } from './../../src/shared/entities/role.entity';
 import {
-  loginTestUser,
-  registerTestUser,
+  registerAndLoginTestUser,
   userCredentials,
 } from './../utils/auth.utils';
-import { JwtService } from '@nestjs/jwt';
-import { UsersModule } from '../../src/users/users.module';
-import { AuthModule } from '../../src/auth/auth.module';
-import { ConfigService } from '@nestjs/config';
-import { ConfigModule } from '../../src/config/config.module';
-import { createDatabaseConfig } from '../../src/config/database.config';
-import { RoleModule } from '../../src/role/role.module';
-
-import { SeederFactoryManager } from 'typeorm-extension';
+import { AppModule } from './../../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [
-        UsersModule,
-        RoleModule,
-        AuthModule,
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          useFactory: (configService: ConfigService) => ({
-            ...createDatabaseConfig(configService),
-            entities: [User, Role],
-          }),
-          inject: [ConfigService],
-        }),
-        TypeOrmModule.forFeature([User, Role]),
-      ],
-      providers: [
-        UsersService,
-        JwtService,
-        ConfigService,
-        SeederFactoryManager,
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
   });
 
-  it('/users (GET)', async () => {
-    await registerTestUser(app, userCredentials);
-    const jwtToken = await loginTestUser(app, userCredentials);
+  describe('/users (GET)', () => {
+    it('Should return 401 when user not logged in', async () => {
+      return request(app.getHttpServer()).get('/users').expect(401);
+    });
 
-    const usersResponse = await request(app.getHttpServer())
-      .get('/users')
-      .set('Authorization', `Bearer ${jwtToken}`);
-
-    expect(usersResponse.status).toBe(200);
-    expect(Array.isArray(usersResponse.body)).toBe(true);
-    expect(usersResponse.body.length).toBe(1);
+    it('Should return list of users', async () => {
+      const token = await registerAndLoginTestUser(app, userCredentials);
+      return request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(1);
+          expect(res.body[0]).toHaveProperty('id');
+          expect(res.body[0]).toHaveProperty('email');
+        });
+    });
   });
 
   afterAll(async () => {

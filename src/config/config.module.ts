@@ -8,7 +8,7 @@ import { validate } from './env.validation';
 @Module({
   imports: [
     NestConfigModule.forRoot({
-      envFilePath: [`.env.${process.env.APP_ENV}`],
+      envFilePath: [`.env.${process.env.APP_ENV || 'test'}`],
       validate,
     }),
   ],

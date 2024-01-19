@@ -58,7 +58,6 @@ export class AuthService {
     });
 
     await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
-
     res.status(200).send(accessToken);
 
     return accessToken;

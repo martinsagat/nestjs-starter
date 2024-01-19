@@ -33,8 +33,6 @@ describe('UsersService', () => {
     expect(usersService).toBeDefined();
   });
 
-  it('userRepository should be defined', () => {});
-
   describe('create', () => {
     it('should create a new user', async () => {
       const role: Role = {

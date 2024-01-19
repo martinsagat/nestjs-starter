@@ -6,11 +6,6 @@ import { Response } from 'express';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Get('health')
   health(@Res() res: Response): Record<string, any> {
     return res.status(200).send({

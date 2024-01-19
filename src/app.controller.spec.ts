@@ -16,10 +16,6 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
-
     it('should return 200 status for health check endpoint', () => {
       const mockResponse: Partial<Response> = {
         status: jest.fn().mockReturnThis(),

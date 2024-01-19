@@ -33,13 +33,6 @@ export class UsersService {
     });
   }
 
-  async findByRefreshToken(refreshToken: string): Promise<User> {
-    return this.userRepository.findOne({
-      where: { refreshToken },
-      relations: ['roles'],
-    });
-  }
-
   async create(signUpData: SignUpDto, roles: Role[]) {
     const existingUser = await this.userRepository.findOne({
       where: { email: signUpData.email },

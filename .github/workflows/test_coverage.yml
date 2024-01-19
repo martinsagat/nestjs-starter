@@ -17,19 +17,19 @@ jobs:
           node-version: 16
           cache: 'npm'
       - run: npm ci
-      - run: npm test
-      
+      - run: npm test --coverage
+
       - name: Get Coverage for badge
         run: |
+          # Extract overall coverage percentage from Jest JSON report
+          COVERAGE=$(jq -r '.total.percent' coverage/lcov-report/coverage-summary.json)
+          echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+
+          # Set branch name
           REF=${{ github.ref }}
-          echo "github.ref: $REF"
           IFS='/' read -ra PATHS <<< "$REF"
           BRANCH_NAME="${PATHS[1]}_${PATHS[2]}"
-          echo $BRANCH_NAME
-          echo "BRANCH=$(echo ${BRANCH_NAME})" >> $GITHUB_ENV
-
-      - name: Set Coverage
-        run: echo "COVERAGE=90%" >> $GITHUB_ENV
+          echo "BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create the Badge
         uses: schneegans/dynamic-badges-action@v1.0.0
@@ -39,5 +39,4 @@ jobs:
           filename: nestjs-starter__${{ env.BRANCH }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}
-          color: green
           namedLogo: jest

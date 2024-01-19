@@ -71,6 +71,8 @@
     "typescript": "^5.1.3"
   },
   "jest": {
+    "coverageReporters": ["json", "lcov", "text", "clover"],
+    "collectCoverage": true,
     "moduleFileExtensions": [
       "js",
       "json",

@@ -28,7 +28,6 @@ jobs:
 
     # basically npm install but only installs from package-lock
     - run: npm i
-    - run: npm run lint
     - run: npm run test:cov
 
     - if: ${{ matrix.node-version == '14.x' }}

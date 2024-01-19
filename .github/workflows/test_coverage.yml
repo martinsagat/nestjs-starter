@@ -12,41 +12,33 @@ on:
 jobs:
   build:
 
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node-version: [14.x]
+    runs-on: ubuntu:latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      
+      - name: Get Coverage for badge
+        run: |
+          REF=${{ github.ref }}
+          echo "github.ref: $REF"
+          IFS='/' read -ra PATHS <<< "$REF"
+          BRANCH_NAME="${PATHS[1]}_${PATHS[2]}"
+          echo $BRANCH_NAME
+          echo "BRANCH=$(echo ${BRANCH_NAME})" >> $GITHUB_ENV
 
-    # basically npm install but only installs from package-lock
-    - run: npm i
-    - run: npm run test:cov
-
-    - if: ${{ matrix.node-version == '14.x' }}
-      name: Get Coverage for badge
-      run: |
-        REF=${{ github.ref }}
-        echo "github.ref: $REF"
-        IFS='/' read -ra PATHS <<< "$REF"
-        BRANCH_NAME="${PATHS[1]}_${PATHS[2]}"
-        echo $BRANCH_NAME
-        echo "BRANCH=$(echo ${BRANCH_NAME})" >> $GITHUB_ENV
-    - if: ${{ matrix.node-version == '14.x' }}
-      name: Create the Badge
-      uses: schneegans/dynamic-badges-action@v1.0.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 7d4c25ef2e97e8de523ef7c1fee26e8e
-        filename: nestjs-starter__${{ env.BRANCH }}.json
-        label: Test Coverage
-        message: ${{ env.COVERAGE }}
-        color: green
-        namedLogo: jest
+      - name: Create the Badge
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 0cec30cd26854aae33dce9e1bb07d5ab
+          filename: nestjs-starter__${{ env.BRANCH }}.json
+          label: Test Coverage
+          message: ${{ env.COVERAGE }}
+          color: green
+          namedLogo: jest

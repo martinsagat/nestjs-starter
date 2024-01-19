@@ -29,9 +29,9 @@ describe('UsersService', () => {
     userRepository = moduleRef.get<Repository<User>>(USER_REPOSITORY_TOKEN);
   });
 
-  // it('should be defined', () => {
-  //   expect(usersService).toBeDefined();
-  // });
+  it('should be defined', () => {
+    expect(usersService).toBeDefined();
+  });
 
   // describe('create', () => {
   //   it('should create a new user', async () => {
@@ -84,6 +84,6 @@ describe('UsersService', () => {
   //       withDeleted: true,
   //     });
   //     expect(userRepository.save).toHaveBeenCalledTimes(0);
-    // });
+  //   });
   // });
 });

@@ -63,3 +63,9 @@ jobs:
           message: ${{ env.COVERAGE }}
           color: ${{ env.COLOR }}
           namedLogo: jest
+
+      - name: Set Timestamp
+        run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Display Badge in README
+        run: sed -i "s/{{TIMESTAMP_OR_RANDOM_NUMBER}}/${{ env.TIMESTAMP }}/g" README.md

@@ -29,8 +29,9 @@ jobs:
       - name: Get Coverage for badge
         run: |
           # Extract overall coverage percentage from Jest JSON report
-          COVERAGE=$(jq -r '.total.percent' coverage/coverage-summary.json)
+          COVERAGE=$(jq -r '.total.lines.pct' coverage/coverage-summary.json)
           echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+          echo "COVERAGE extracted successfully!"
 
           # Set branch name
           REF=${{ github.ref }}

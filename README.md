@@ -1,11 +1,11 @@
 # NestJS + MySQL Starter
 ![Unit Test Workflow](https://github.com/martinsagat/nestjs-starter/actions/workflows/unit_test.yml/badge.svg)
 ![E2E Workflow](https://github.com/martinsagat/nestjs-starter/actions/workflows/e2e_test.yml/badge.svg)
-![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/martinsagat/0cec30cd26854aae33dce9e1bb07d5ab/raw/nestjs-starter__heads_main.json?cachebust={{TIMESTAMP_OR_RANDOM_NUMBER}})
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/martinsagat/0cec30cd26854aae33dce9e1bb07d5ab/raw/nestjs-starter__heads_main.json)
 
 ## Used Technologies
 - [NestJS](https://nestjs.com)
-- [MySQL](https://www.mysql.com) (running in docker conainer)
+- [MySQL](https://www.mysql.com) (running in docker container)
 - [Docker](https://www.docker.com)
 
 ## Implemented Features

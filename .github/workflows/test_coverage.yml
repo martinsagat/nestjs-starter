@@ -49,6 +49,10 @@ jobs:
           BRANCH_NAME="${PATHS[2]}"
           echo "BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
 
+      - name: Determine Badge Color
+        id: determine-color
+        run: echo "COLOR=$(if [ $(echo "${{ env.COVERAGE }}" | bc) -lt 40 ]; then echo 'red'; elif [ $(echo "${{ env.COVERAGE }}" | bc) -le 80 ]; then echo 'yellow'; else echo 'green'; fi)" >> $GITHUB_ENV
+
       - name: Create the Badge
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
@@ -57,5 +61,5 @@ jobs:
           filename: nestjs-starter__heads_${{ env.BRANCH }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}
-          color: green
+          color: ${{ env.COLOR }}
           namedLogo: jest

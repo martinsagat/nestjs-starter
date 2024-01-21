@@ -1,51 +1,84 @@
-name: Build Status
-
+name: Update Coverage in README
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.yml'
+      - '.github/**'
+      - 'data/**'
+      - 'dist/**'
 
 jobs:
-  build:
+  update-coverage-in-readme:
+    name: Update Coverage in README
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: NPM Cache
+        id: npm-cache
+        uses: actions/cache@v3
         with:
-          node-version: 18
-          cache: 'npm'
+          path: '**/node_modules'
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm
 
-      - name: Install dependencies
+      - name: Install Dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Run tests with coverage
-        run: npm run test:cov
+      - name: Check Format
+        run: npm run format
 
-      - name: Get Coverage for badge
-        run: |
-          # Extract overall coverage percentage from Jest JSON report
-          COVERAGE=$(jq -r '.total.lines.pct' coverage/coverage-summary.json)
-          echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
-          echo "COVERAGE extracted successfully!"
+      - name: Check Lint
+        run: npm run lint
 
-          # Set branch name
-          REF=${{ github.ref }}
-          IFS='/' read -ra PATHS <<< "$REF"
-          BRANCH_NAME="${PATHS[2]}"
-          echo "BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+      - name: Check Build
+        run: npm run build
 
-      - name: Create the Badge
-        uses: schneegans/dynamic-badges-action@v1.0.0
+      - name: Run Tests
+        run: npm run test:cov --coverage --reporters=default --reporters=jest-junit
+
+      - name: Jest Coverage Comment
+        id: coverageComment
+        uses: MishaKav/jest-coverage-comment@main
         with:
-          auth: ${{ secrets.GIST_SECRET }}
+          hide-comment: true
+          coverage-path: ./coverage.txt
+          junitxml-path: ./coverage/junit.xml
+
+      - name: Check the output coverage
+        run: |
+          echo "Summary Report"
+          echo "Coverage Percentage - ${{ steps.coverageComment.outputs.coverage }}"
+          echo "Coverage Color - ${{ steps.coverageComment.outputs.color }}"
+          echo "Summary Html - ${{ steps.coverageComment.outputs.summaryHtml }}"
+
+          echo "JUnit Report"
+          echo "tests - ${{ steps.coverageComment.outputs.tests }}"
+          echo "skipped - ${{ steps.coverageComment.outputs.skipped }}"
+          echo "failures - ${{ steps.coverageComment.outputs.failures }}"
+          echo "errors - ${{ steps.coverageComment.outputs.errors }}"
+          echo "time - ${{ steps.coverageComment.outputs.time }}"
+
+          echo "Coverage Report"
+          echo "lines - ${{ steps.coverageComment.outputs.lines }}"
+          echo "branches - ${{ steps.coverageComment.outputs.branches }}"
+          echo "functions - ${{ steps.coverageComment.outputs.functions }}"
+          echo "statements - ${{ steps.coverageComment.outputs.statements }}"
+          echo "coverage - ${{ steps.coverageComment.outputs.coverage }}"
+          echo "color - ${{ steps.coverageComment.outputs.color }}"
+          echo "Coverage Html - ${{ steps.coverageComment.outputs.coverageHtml }}"
+
+      - name: Create the badge
+        if: github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.JEST_COVERAGE_COMMENT }}
           gistID: 0cec30cd26854aae33dce9e1bb07d5ab
-          filename: nestjs-starter__heads_${{ env.BRANCH }}.json
-          label: Test Coverage
-          message: ${{ env.COVERAGE }}
-          color: green
-          namedLogo: jest
+          filename: jest-coverage-comment__main.json
+          label: coverage
+          message: ${{ steps.coverageComment.outputs.coverage }}%
+          color: ${{ steps.coverageComment.outputs.color }}
+          namedLogo: javascript

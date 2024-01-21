@@ -51,7 +51,7 @@ jobs:
 
       - name: Determine Badge Color
         id: determine-color
-        run: echo "COLOR=$(if [ $(echo "${{ env.COVERAGE }}" | bc) -lt 40 ]; then echo 'red'; elif [ $(echo "${{ env.COVERAGE }}" | bc) -le 80 ]; then echo 'yellow'; else echo 'green'; fi)" >> $GITHUB_ENV
+        run: echo "COLOR=$(awk 'BEGIN { if (${env.COVERAGE} < 40) print \"red\"; else if (${env.COVERAGE} <= 80) print \"yellow\"; else print \"green\"; exit }')" >> $GITHUB_ENV
 
       - name: Create the Badge
         uses: schneegans/dynamic-badges-action@v1.0.0

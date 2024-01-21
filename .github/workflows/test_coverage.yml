@@ -44,7 +44,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 0cec30cd26854aae33dce9e1bb07d5ab
-          filename: nestjs-starter__${{ env.BRANCH }}.json
+          filename: nestjs-starter__heads_${{ env.BRANCH }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}
           color: green

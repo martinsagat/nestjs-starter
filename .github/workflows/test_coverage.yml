@@ -47,4 +47,5 @@ jobs:
           filename: nestjs-starter__${{ env.BRANCH }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}
+          color: green
           namedLogo: jest
